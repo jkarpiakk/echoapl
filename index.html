@@ -1,176 +1,349 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formularz ECHO</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.0.2/build/index.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formularz badania ECHO</title>
+  <!-- Tailwind CSS via CDN (Play CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-gray-50">
-  <div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Formularz badania echokardiograficznego</h1>
-    <form id="echoForm" class="space-y-8">
-      <!-- 1. Dane pacjenta -->
-      <section>
-        <h2 class="text-2xl font-semibold mb-4">1. Dane pacjenta</h2>
-        <div class="grid grid-cols-2 gap-6">
+<body class="bg-gray-50 text-gray-800 p-4">
+  <div class="max-w-4xl mx-auto py-6">
+    <h1 class="text-2xl font-bold mb-4">Formularz badania echokardiograficznego</h1>
+    <form id="echoForm" class="space-y-6">
+      <!-- Sekcja: Dane pacjenta -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Dane pacjenta</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label for="name" class="block text-gray-700 mb-1">Nazwisko i Imię</label>
-            <input type="text" id="name" name="NAZWISKO IMIĘ" class="w-full border-gray-300 rounded-md" required>
+            <label class="block text-gray-700 font-medium mb-1" for="patientName">Nazwisko i imię:</label>
+            <input class="border rounded p-2 w-full" type="text" id="patientName" name="patientName" required />
           </div>
           <div>
-            <label for="id" class="block text-gray-700 mb-1">Nr badania / ID pacjenta</label>
-            <input type="text" id="id" name="Nr badania / ID pacjenta" class="w-full border-gray-300 rounded-md" required>
+            <label class="block text-gray-700 font-medium mb-1" for="age">Wiek [lata]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="age" name="age" min="0" required />
           </div>
           <div>
-            <label for="examDate" class="block text-gray-700 mb-1">Data badania</label>
-            <input type="date" id="examDate" name="Data badania" class="w-full border-gray-300 rounded-md" required>
-          </div>
-          <div>
-            <label for="operator" class="block text-gray-700 mb-1">Operator / lekarz</label>
-            <input type="text" id="operator" name="Operator / lekarz" class="w-full border-gray-300 rounded-md" required>
-          </div>
-          <div>
-            <label for="age" class="block text-gray-700 mb-1">Wiek</label>
-            <input type="number" id="age" name="WIEK" class="w-24 border-gray-300 rounded-md" min="0" required>
-          </div>
-          <div>
-            <label class="block text-gray-700 mb-1">Płeć</label>
+            <label class="block text-gray-700 font-medium mb-1">Płeć:</label>
             <div class="flex items-center space-x-4">
-              <label class="inline-flex items-center">
-                <input type="radio" name="PŁEĆ 0- KOBIETA 1- MĘŻCZYZNA" value="0" class="form-radio" checked>
-                <span class="ml-2">Kobieta</span>
-              </label>
-              <label class="inline-flex items-center">
-                <input type="radio" name="PŁEĆ 0- KOBIETA 1- MĘŻCZYZNA" value="1" class="form-radio">
-                <span class="ml-2">Mężczyzna</span>
-              </label>
+              <label><input class="mr-1" type="radio" name="sex" value="0" required /> Kobieta</label>
+              <label><input class="mr-1" type="radio" name="sex" value="1" /> Mężczyzna</label>
             </div>
           </div>
+          <div></div> <!-- pusty dla wyrównania w siatce -->
           <div>
-            <label for="height" class="block text-gray-700 mb-1">Wzrost (cm)</label>
-            <input type="number" id="height" name="WZROST [cm]" class="w-full border-gray-300 rounded-md" min="0">
+            <label class="block text-gray-700 font-medium mb-1" for="height">Wzrost [cm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="height" name="height" min="0" />
           </div>
           <div>
-            <label for="weight" class="block text-gray-700 mb-1">Waga (kg)</label>
-            <input type="number" id="weight" name="WAGA [kg]" class="w-full border-gray-300 rounded-md" step="0.1">
+            <label class="block text-gray-700 font-medium mb-1" for="weight">Waga [kg]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="weight" name="weight" min="0" step="0.1" />
           </div>
           <div>
-            <label for="bmi" class="block text-gray-700 mb-1">BMI (kg/m²)</label>
-            <input type="number" id="bmi" name="BMI [kg/m2]" class="w-full border-gray-300 rounded-md bg-gray-100" readonly>
+            <label class="block text-gray-700 font-medium mb-1" for="bmi">BMI [kg/m²]:</label>
+            <input class="border rounded p-2 w-full bg-gray-100" type="number" id="bmi" name="bmi" step="0.1" readonly />
           </div>
         </div>
-      </section>
+      </div>
 
-      <!-- 2. Choroby współistniejące -->
-      <section>
-        <h2 class="text-2xl font-semibold mb-4">2. Choroby współistniejące / czynniki ryzyka</h2>
-        <div class="grid grid-cols-3 gap-4">
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="NT 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Nadciśnienie tętnicze (NT)</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="DM 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Cukrzyca (DM)</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="PCHN 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Przewlekła choroba nerek (PChN)</span>
-          </label>
-          <div>
-            <label for="egfr" class="block text-gray-700 mb-1">eGFR [ml/min/1.73m²]</label>
-            <input type="number" id="egfr" name="eGFR [ml/min/1.73m2]" class="w-32 border-gray-300 rounded-md">
-          </div>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="POChP 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">POChP / Astma</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="CAD 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Choroba wieńcowa (CAD)</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="PCI 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Przebyty PCI</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="CABG 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Przebyty CABG</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="HF 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Niewydolność serca (HF)</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="AF 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Migotanie przedsionków (AF)</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="Smoking 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Palenie tytoniu</span>
-          </label>
-          <label class="inline-flex items-center">
-            <input type="checkbox" name="Stroke/TIA 0- NIE 1- TAK" class="form-checkbox">
-            <span class="ml-2">Udar/TIA</span>
-          </label>
+      <!-- Sekcja: Choroby współistniejące -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Choroby współistniejące</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <!-- Każdy checkbox/radio Tak/Nie jako osobny element -->
+          <label class="text-gray-700"><input type="checkbox" id="nt" name="nt" value="1" /> NT (nadciśnienie tęt.)</label>
+          <label class="text-gray-700"><input type="checkbox" id="dm" name="dm" value="1" /> Cukrzyca (DM)</label>
+          <label class="text-gray-700"><input type="checkbox" id="pchn" name="pchn" value="1" /> PChN (niewyd. nerek)</label>
+          <label class="text-gray-700"><input type="checkbox" id="copd" name="copd" value="1" /> POChP/Astma</label>
+          <label class="text-gray-700"><input type="checkbox" id="cad" name="cad" value="1" /> Ch. wieńcowa (CAD)</label>
+          <label class="text-gray-700"><input type="checkbox" id="pci" name="pci" value="1" /> Przebyte PCI</label>
+          <label class="text-gray-700"><input type="checkbox" id="cabg" name="cabg" value="1" /> CABG</label>
+          <label class="text-gray-700"><input type="checkbox" id="hf" name="hf" value="1" /> Niewydolność serca (HF)</label>
+          <label class="text-gray-700"><input type="checkbox" id="af" name="af" value="1" /> Migotanie przedsionków (AF)</label>
+          <label class="text-gray-700"><input type="checkbox" id="smoking" name="smoking" value="1" /> Palenie tytoniu</label>
+          <label class="text-gray-700"><input type="checkbox" id="udar" name="udar" value="1" /> Przebyty udar/TIA</label>
         </div>
-      </section>
+      </div>
 
-      <!-- Further sections (Laboratory, Medications, Echo measurements, Valves, EKG, Follow-up) go here similarly -->
+      <!-- Sekcja: Przebyte operacje/zabiegi na zastawkach -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Przebyte zabiegi kardiochirurgiczne</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <label class="text-gray-700"><input type="checkbox" id="savr" name="savr" value="1" /> SAVR (chirurgiczna Ao)</label>
+          <label class="text-gray-700"><input type="checkbox" id="tavi" name="tavi" value="1" /> TAVI (cewnikowa Ao)</label>
+          <label class="text-gray-700"><input type="checkbox" id="mvr" name="mvr" value="1" /> MVR/MVpl (mitralna)</label>
+          <label class="text-gray-700"><input type="checkbox" id="tvpl" name="tvpl" value="1" /> TVpl (trójdzielna)</label>
+        </div>
+      </div>
 
-      <!-- Export buttons -->
-      <section class="mt-6">
-        <button type="button" onclick="exportCSV()" class="px-4 py-2 bg-blue-600 text-white rounded-md mr-4">Eksportuj CSV</button>
-        <button type="button" onclick="exportDocx()" class="px-4 py-2 bg-green-600 text-white rounded-md">Eksportuj DOCX</button>
-      </section>
+      <!-- Sekcja: Parametry serca (Echo) -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Parametry serca (ECHO)</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="lvedd">LVEDD [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="lvedd" name="lvedd" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="lvesd">LVESD [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="lvesd" name="lvesd" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="la">LA [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="la" name="la" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="lavi">LAVI [ml/m²]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="lavi" name="lavi" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="ivs">IVS [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="ivs" name="ivs" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="pw">PW (ściana tylna) [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="pw" name="pw" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="rvot">RVOT [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="rvot" name="rvot" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="lvef">LVEF [%]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="lvef" name="lvef" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="edv">EDV [ml]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="edv" name="edv" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="esv">ESV [ml]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="esv" name="esv" step="0.1" />
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="tapse">TAPSE [mm]:</label>
+            <input class="border rounded p-2 w-full" type="number" id="tapse" name="tapse" step="0.1" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Sekcja: Ocena zastawek -->
+      <div>
+        <h2 class="text-xl font-semibold mb-2">Ocena zastawek</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="mv">Zastawka mitralna (niedomykalność):</label>
+            <select class="border rounded p-2 w-full" id="mv" name="mv">
+              <option value="0">0 – łagodna</option>
+              <option value="1">1 – umiarkowana</option>
+              <option value="2">2 – ciężka</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-1" for="tv">Zastawka trójdzielna (niedomykalność):</label>
+            <select class="border rounded p-2 w-full" id="tv" name="tv">
+              <option value="0">0 – łagodna</option>
+              <option value="1">1 – umiarkowana</option>
+              <option value="2">2 – ciężka</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Przyciski akcji -->
+      <div class="pt-4 flex space-x-4">
+        <button type="button" onclick="exportCSV()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">Eksport CSV</button>
+        <button type="button" onclick="exportDoc()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded">Eksport DOCX</button>
+      </div>
     </form>
   </div>
 
+  <!-- Import bibliotek JS: FileSaver i html-docx-js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
+  <script src="https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js"></script>
   <script>
-    // Dynamic BMI calculation
+    // Automatyczne obliczanie BMI przy zmianie wzrostu lub wagi
     const heightInput = document.getElementById('height');
     const weightInput = document.getElementById('weight');
-    const bmiInput = document.getElementById('bmi');
-    function calcBMI() {
+    heightInput.addEventListener('input', updateBMI);
+    weightInput.addEventListener('input', updateBMI);
+    function updateBMI() {
       const h = parseFloat(heightInput.value) || 0;
       const w = parseFloat(weightInput.value) || 0;
-      bmiInput.value = (h > 0 && w > 0) ? (w/Math.pow(h/100,2)).toFixed(1) : '';
+      if(h > 0 && w > 0) {
+        const bmiValue = (w / ((h/100)**2)).toFixed(1);
+        document.getElementById('bmi').value = bmiValue;
+      } else {
+        document.getElementById('bmi').value = '';
+      }
     }
-    heightInput.addEventListener('input', calcBMI);
-    weightInput.addEventListener('input', calcBMI);
 
-    // CSV export
+    // Funkcja eksportująca dane do CSV
     function exportCSV() {
-      const data = new FormData(document.getElementById('echoForm'));
-      const headers = Array.from(data.keys());
-      let csv = headers.join(';') + '\n' + headers.map(h => {
-        let v = data.get(h);
-        if(v === null) v = h.includes('0- NIE 1- TAK') ? '0' : '';
-        return `"${v}"`;
-      }).join(';');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'echo_data.csv'; document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Pobierz wartości pól formularza
+      const name = document.getElementById('patientName').value || '';
+      const age = document.getElementById('age').value || '';
+      // Płeć: znajdź zaznaczone radio (0 lub 1)
+      const sexValue = document.querySelector('input[name="sex"]:checked');
+      const sex = sexValue ? sexValue.value : '';
+      const height = document.getElementById('height').value || '';
+      const weight = document.getElementById('weight').value || '';
+      const bmi = document.getElementById('bmi').value || '';
+      // Pola Tak/Nie: checkbox -> 1 jeśli zaznaczony, 0 jeśli nie
+      function cbVal(id) { return document.getElementById(id).checked ? '1' : '0'; }
+      const nt = cbVal('nt');
+      const dm = cbVal('dm');
+      const pchn = cbVal('pchn');
+      const eGFR = document.getElementById('eGFR') ? document.getElementById('eGFR').value : ''; // eGFR jest pominięte w form, pozostaw puste
+      const copd = cbVal('copd');
+      const cad = cbVal('cad');
+      const pci = cbVal('pci');
+      const cabg = cbVal('cabg');
+      const hf = cbVal('hf');
+      const af = cbVal('af');
+      const smoking = cbVal('smoking');
+      const udar = cbVal('udar');
+      const savr = cbVal('savr');
+      const tavi = cbVal('tavi');
+      const mvr = cbVal('mvr');
+      const tvpl = cbVal('tvpl');
+      // Parametry ECHO
+      const lvedd = document.getElementById('lvedd').value || '';
+      const lvesd = document.getElementById('lvesd').value || '';
+      const la = document.getElementById('la').value || '';
+      const lavi = document.getElementById('lavi').value || '';
+      const ivs = document.getElementById('ivs').value || '';
+      const pw = document.getElementById('pw').value || '';
+      const rvot = document.getElementById('rvot').value || '';
+      const lvef = document.getElementById('lvef').value || '';
+      const edv = document.getElementById('edv').value || '';
+      const esv = document.getElementById('esv').value || '';
+      const tapse = document.getElementById('tapse').value || '';
+      const mv = document.getElementById('mv').value || '';
+      const tv = document.getElementById('tv').value || '';
+
+      // Zbuduj linie CSV w takiej kolejności jak pola (średnik jako separator)
+      const csvLine = [
+        name, '', age, sex, height, weight, bmi,
+        nt, dm, pchn, '', copd, cad, pci, cabg, hf, af, smoking, udar,
+        savr, tavi, mvr, tvpl,
+        // Pomiń kolumny badań lab i leków - wstawiamy je jako puste miejsca jeżeli wymagane do zgodności kolumn:
+        // Tutaj dla uproszczenia zakładamy, że nie dołączamy ich wcale do CSV (całkowite pominięcie)
+        lvedd, lvesd, la, lavi, ivs, pw, rvot, lvef, edv, esv, tapse,
+        mv, tv
+      ].join(';');
+
+      // Dodaj nagłówek CSV (opcjonalnie, jeśli chcemy pierwszy wiersz z nazwami kolumn)
+      // const header = "NAZWISKO IMIĘ;L.p.;WIEK;PŁEĆ;WZROST [cm];WAGA [kg];BMI [kg/m2];NT;DM;PCHN;eGFR;POCHP/ASTMA;CAD;PCI;CABG;HF;AF;SMOKING;UDAR/TIA;SAVR;TAVI;MVR/MVpl;TVpl;LVEDD;LVESD;LA;LAVI;IVS;PW;RVOT;LVEF;EDV;ESV;TAPSE;MV;TV";
+      // const csvContent = header + "\n" + csvLine + "\n";
+
+      const csvContent = csvLine + "\n"; // bez nagłówka, tylko jeden wiersz danych
+      // Utwórz blob i zainicjuj pobranie pliku CSV
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      saveAs(blob, 'badanie_echo.csv');  // użycie FileSaver.js do zapisu pliku
     }
 
-    // DOCX export
-    async function exportDocx() {
-      const f = new FormData(document.getElementById('echoForm'));
-      const doc = new docx.Document();
-      doc.addSection({ children: [
-        new docx.Paragraph({ text: 'Raport ECHO', heading: docx.HeadingLevel.HEADING_1 }),
-        new docx.Paragraph(`Pacjent: ${f.get('NAZWISKO IMIĘ') || ''}`),
-        new docx.Paragraph(`Data badania: ${f.get('Data badania') || ''}`),
-        new docx.Paragraph(`Operator: ${f.get('Operator / lekarz') || ''}`),
-      ]});
-      const blob = await docx.Packer.toBlob(doc);
-      const docBlob = blob.slice(0, blob.size, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-      saveAs(docBlob, 'echo_report.docx');
+    // Funkcja eksportująca dane do DOCX (raport Word)
+    function exportDoc() {
+      // Pobranie wszystkich potrzebnych wartości (jak w exportCSV, ale będziemy je opisywać tekstowo)
+      const name = document.getElementById('patientName').value || '<i>brak</i>';
+      const age = document.getElementById('age').value || '<i>brak</i>';
+      const sexRadio = document.querySelector('input[name="sex"]:checked');
+      let sexText = '<i>brak</i>';
+      if(sexRadio) { sexText = sexRadio.value === '1' ? 'Mężczyzna' : 'Kobieta'; }
+      const height = document.getElementById('height').value || '';
+      const weight = document.getElementById('weight').value || '';
+      const bmi = document.getElementById('bmi').value || '';
+      // Choroby współist. - zamiana na Tak/Nie
+      function yesNo(id) { return document.getElementById(id).checked ? 'Tak' : 'Nie'; }
+      const nt = yesNo('nt');
+      const dm = yesNo('dm');
+      const pchn = yesNo('pchn');
+      const copd = yesNo('copd');
+      const cad = yesNo('cad');
+      const pci = yesNo('pci');
+      const cabg = yesNo('cabg');
+      const hf = yesNo('hf');
+      const af = yesNo('af');
+      const smoking = yesNo('smoking');
+      const udar = yesNo('udar');
+      const savr = yesNo('savr');
+      const tavi = yesNo('tavi');
+      const mvr = yesNo('mvr');
+      const tvpl = yesNo('tvpl');
+      // Parametry ECHO (przy braku wartości pozostaw puste)
+      const lvedd = document.getElementById('lvedd').value;
+      const lvesd = document.getElementById('lvesd').value;
+      const la = document.getElementById('la').value;
+      const lavi = document.getElementById('lavi').value;
+      const ivs = document.getElementById('ivs').value;
+      const pw = document.getElementById('pw').value;
+      const rvot = document.getElementById('rvot').value;
+      const lvef = document.getElementById('lvef').value;
+      const edv = document.getElementById('edv').value;
+      const esv = document.getElementById('esv').value;
+      const tapse = document.getElementById('tapse').value;
+      // Zastawki - mapowanie kodów 0/1/2 na tekst
+      const mvCode = document.getElementById('mv').value;
+      const tvCode = document.getElementById('tv').value;
+      const severityMap = { '0': 'łagodna', '1': 'umiarkowana', '2': 'ciężka' };
+      const mvText = severityMap[mvCode] || '<i>brak danych</i>';
+      const tvText = severityMap[tvCode] || '<i>brak danych</i>';
+
+      // Budowanie treści HTML dokumentu
+      let htmlContent = `
+        <html>
+          <head>
+            <meta charset="UTF-8">
+            <style>
+              body { font-family: Arial, sans-serif; font-size: 12pt; }
+              h2 { font-size: 14pt; font-weight: bold; margin-top: 10pt; }
+              p { margin: 2pt 0; }
+              ul { margin: 2pt 0 2pt 20pt; }
+            </style>
+          </head>
+          <body>
+            <h2>Dane pacjenta</h2>
+            <p><strong>Imię i nazwisko:</strong> ${name}</p>
+            <p><strong>Wiek:</strong> ${age} lat</p>
+            <p><strong>Płeć:</strong> ${sexText}</p>
+            <p><strong>Wzrost, waga, BMI:</strong> ${height || '-'} cm, ${weight || '-'} kg, ${bmi || '-'} kg/m²</p>
+            <h2>Choroby współistniejące</h2>
+            <ul>
+              <li>Nadciśnienie tętnicze: ${nt}</li>
+              <li>Cukrzyca: ${dm}</li>
+              <li>Przewlekła choroba nerek: ${pchn}</li>
+              <li>POChP/Astma: ${copd}</li>
+              <li>Choroba wieńcowa (CAD): ${cad}</li>
+              <li>Przebyte PCI: ${pci}</li>
+              <li>CABG: ${cabg}</li>
+              <li>Niewydolność serca: ${hf}</li>
+              <li>Migotanie przedsionków: ${af}</li>
+              <li>Palenie tytoniu: ${smoking}</li>
+              <li>Udar/TIA: ${udar}</li>
+            </ul>
+            <h2>Przebyte zabiegi na zastawkach</h2>
+            <ul>
+              <li>SAVR (chirurgiczna wymiana zastawki aortalnej): ${savr}</li>
+              <li>TAVI (przezcewnikowa implantacja zastawki aortalnej): ${tavi}</li>
+              <li>Operacja zastawki mitralnej (MVR/MVpl): ${mvr}</li>
+              <li>Operacja zastawki trójdzielnej (TVpl): ${tvpl}</li>
+            </ul>
+            <h2>Parametry serca w ECHO</h2>
+            <p><strong>Wymiary i funkcja lewej komory:</strong> LVEDD = ${lvedd || '-'} mm, LVESD = ${lvesd || '-'} mm, LVEF = ${lvef || '-'}% (EF).</p>
+            <p><strong>Objętości lewej komory:</strong> EDV = ${edv || '-'} ml, ESV = ${esv || '-'} ml.</p>
+            <p><strong>Lewy przedsionek:</strong> LA = ${la || '-'} mm, LAVI = ${lavi || '-'} ml/m².</p>
+            <p><strong>Grubość ścian LK:</strong> IVS = ${ivs || '-'} mm, PW = ${pw || '-'} mm.</p>
+            <p><strong>Prawa komora:</strong> RVOT = ${rvot || '-'} mm, TAPSE = ${tapse || '-'} mm.</p>
+            <h2>Ocena zastawek</h2>
+            <p>Zastawka mitralna – niedomykalność: <strong>${mvText}</strong></p>
+            <p>Zastawka trójdzielna – niedomykalność: <strong>${tvText}</strong></p>
+          </body>
+        </html>`;
+      
+      // Konwersja HTML -> DOCX i pobranie pliku
+      const docBlob = window.htmlDocx.asBlob(htmlContent, { orientation: 'portrait' });
+      saveAs(docBlob, 'Badanie_ECHO.docx');
     }
   </script>
 </body>
