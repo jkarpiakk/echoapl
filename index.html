@@ -1,350 +1,154 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Formularz badania ECHO</title>
-  <!-- Tailwind CSS via CDN (Play CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formularz ECHO CLS</title>
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet">
+  <!-- PapaParse for CSV export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+  <!-- docx.js UMD bundle for DOCX export -->
+  <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/docx.umd.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 p-4">
-  <div class="max-w-4xl mx-auto py-6">
-    <h1 class="text-2xl font-bold mb-4">Formularz badania echokardiograficznego</h1>
+<body class="bg-gray-100 text-gray-800">
+  <div class="max-w-5xl mx-auto p-8 bg-white shadow-lg mt-10 rounded-lg">
+    <!-- Header -->
+    <header class="flex items-center mb-8">
+      <img src="logo_szpitala.png" alt="Logo kliniki" class="h-16 mr-6">
+      <div>
+        <h1 class="text-2xl font-bold">Klinika Kardiologii z Pododdziałem Ostrych Zespołów Wieńcowych</h1>
+        <p class="mt-1">Kliniczny Szpital Wojewódzki Nr 2 im. Św. Jadwigi Królowej w Rzeszowie</p>
+        <p>ul. Lwowska 60, 35‑301 Rzeszów</p>
+      </div>
+    </header>
+
+    <!-- Form -->
     <form id="echoForm" class="space-y-6">
-      <!-- Sekcja: Dane pacjenta -->
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Dane pacjenta</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="patientName">Nazwisko i imię:</label>
-            <input class="border rounded p-2 w-full" type="text" id="patientName" name="patientName" required />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="age">Wiek [lata]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="age" name="age" min="0" required />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1">Płeć:</label>
-            <div class="flex items-center space-x-4">
-              <label><input class="mr-1" type="radio" name="sex" value="0" required /> Kobieta</label>
-              <label><input class="mr-1" type="radio" name="sex" value="1" /> Mężczyzna</label>
-            </div>
-          </div>
-          <div></div> <!-- pusty dla wyrównania w siatce -->
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="height">Wzrost [cm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="height" name="height" min="0" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="weight">Waga [kg]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="weight" name="weight" min="0" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="bmi">BMI [kg/m²]:</label>
-            <input class="border rounded p-2 w-full bg-gray-100" type="number" id="bmi" name="bmi" step="0.1" readonly />
-          </div>
+      <!-- Section 1: Patient Data -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">1. Dane pacjenta</legend>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+          <label class="block"><span class="text-sm">Imię i nazwisko</span>
+            <input name="patientName" type="text" class="mt-1 w-full border rounded p-2" required>
+          </label>
+          <label class="block"><span class="text-sm">Nr badania / ID</span>
+            <input name="patientID" type="text" class="mt-1 w-full border rounded p-2" required>
+          </label>
+          <label class="block"><span class="text-sm">Data badania</span>
+            <input name="examDate" type="date" class="mt-1 w-full border rounded p-2" required>
+          </label>
+          <label class="block"><span class="text-sm">Operator / lekarz</span>
+            <input name="operator" type="text" class="mt-1 w-full border rounded p-2" required>
+          </label>
         </div>
-      </div>
+      </fieldset>
 
-      <!-- Sekcja: Choroby współistniejące -->
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Choroby współistniejące</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-          <!-- Każdy checkbox/radio Tak/Nie jako osobny element -->
-          <label class="text-gray-700"><input type="checkbox" id="nt" name="nt" value="1" /> NT (nadciśnienie tęt.)</label>
-          <label class="text-gray-700"><input type="checkbox" id="dm" name="dm" value="1" /> Cukrzyca (DM)</label>
-          <label class="text-gray-700"><input type="checkbox" id="pchn" name="pchn" value="1" /> PChN (niewyd. nerek)</label>
-          <label class="text-gray-700"><input type="checkbox" id="copd" name="copd" value="1" /> POChP/Astma</label>
-          <label class="text-gray-700"><input type="checkbox" id="cad" name="cad" value="1" /> Ch. wieńcowa (CAD)</label>
-          <label class="text-gray-700"><input type="checkbox" id="pci" name="pci" value="1" /> Przebyte PCI</label>
-          <label class="text-gray-700"><input type="checkbox" id="cabg" name="cabg" value="1" /> CABG</label>
-          <label class="text-gray-700"><input type="checkbox" id="hf" name="hf" value="1" /> Niewydolność serca (HF)</label>
-          <label class="text-gray-700"><input type="checkbox" id="af" name="af" value="1" /> Migotanie przedsionków (AF)</label>
-          <label class="text-gray-700"><input type="checkbox" id="smoking" name="smoking" value="1" /> Palenie tytoniu</label>
-          <label class="text-gray-700"><input type="checkbox" id="udar" name="udar" value="1" /> Przebyty udar/TIA</label>
+      <!-- Section 2: Chamber Dimensions -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">2. Wymiary jam serca (M-mode / 2D)</legend>
+        <div id="dims" class="grid grid-cols-3 gap-4 mt-4"></div>
+      </fieldset>
+
+      <!-- Section 3: Vessel Diameters -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">3. Średnice pni naczyniowych</legend>
+        <div id="ves" class="grid grid-cols-3 gap-4 mt-4"></div>
+      </fieldset>
+
+      <!-- Section 4: Volumes & EF -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">4. Objętości i funkcja skurczowa</legend>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+          <label><span class="text-sm">EF [%]</span>
+            <input name="EF" type="number" step="any" class="mt-1 w-full border rounded p-2" required>
+          </label>
+          <label><span class="text-sm">EDV [ml]</span>
+            <input name="EDV" type="number" step="any" class="mt-1 w-full border rounded p-2">
+          </label>
+          <label><span class="text-sm">ESV [ml]</span>
+            <input name="ESV" type="number" step="any" class="mt-1 w-full border rounded p-2">
+          </label>
         </div>
-      </div>
+      </fieldset>
 
-      <!-- Sekcja: Przebyte operacje/zabiegi na zastawkach -->
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Przebyte zabiegi kardiochirurgiczne</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-          <label class="text-gray-700"><input type="checkbox" id="savr" name="savr" value="1" /> SAVR (chirurgiczna Ao)</label>
-          <label class="text-gray-700"><input type="checkbox" id="tavi" name="tavi" value="1" /> TAVI (cewnikowa Ao)</label>
-          <label class="text-gray-700"><input type="checkbox" id="mvr" name="mvr" value="1" /> MVR/MVpl (mitralna)</label>
-          <label class="text-gray-700"><input type="checkbox" id="tvpl" name="tvpl" value="1" /> TVpl (trójdzielna)</label>
+      <!-- Section 5: Segmental WMSI -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">5. Odcinkowe zaburzenia kurczliwości</legend>
+        <div class="flex items-center mt-4">
+          <input type="checkbox" name="segmentalPresent" id="segmentalPresent" class="form-checkbox">
+          <label for="segmentalPresent" class="ml-2">Obecne</label>
         </div>
-      </div>
+        <label class="block mt-4"><span class="text-sm">Opis segmentów / uwagi</span>
+          <textarea name="segmentalDescription" rows="3" class="mt-1 w-full border rounded p-2"></textarea>
+        </label>
+      </fieldset>
 
-      <!-- Sekcja: Parametry serca (Echo) -->
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Parametry serca (ECHO)</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="lvedd">LVEDD [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="lvedd" name="lvedd" step="0.1" />
+      <!-- Section 6: TAPSE -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">6. TAPSE</legend>
+        <label class="block mt-4"><span class="text-sm">Wartość [mm]</span>
+          <input name="TAPSE" type="number" step="any" class="mt-1 w-32 border rounded p-2">
+        </label>
+      </fieldset>
+
+      <!-- Section 7: Valve Assessment -->
+      <fieldset class="border p-4 rounded">
+        <legend class="font-semibold">7. Ocena zastawek</legend>
+        <!-- 7.1 Mitral valve -->
+        <div class="mt-4">
+          <h3 class="font-semibold">7.1 Zastawka mitralna</h3>
+          <div class="grid grid-cols-3 gap-4 mt-2">
+            <label><span class="text-sm">Regurgitacja</span>
+              <select name="mitralRegurg" class="mt-1 w-full border rounded p-2" required>
+                <option value="">-</option>
+                <option>łagodna</option>
+                <option>umiarkowana</option>
+                <option>ciężka</option>
+              </select>
+            </label>
+            <label><span class="text-sm">VC [cm²]</span>
+              <input name="mitralVC" type="number" step="any" class="mt-1 w-full border rounded p-2">
+            </label>
+            <label><span class="text-sm">PISA [mm]</span>
+              <input name="mitralPISA" type="number" step="any" class="mt-1 w-full border rounded p-2">
+            </label>
           </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="lvesd">LVESD [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="lvesd" name="lvesd" step="0.1" />
+          <div class="grid grid-cols-3 gap-4 mt-2">
+            <label><span class="text-sm">ERO [cm²]</span>
+              <input name="mitralERO" type="number" step="any" class="mt-1 w-full border rounded p-2">
+            </label>
+            <label><span class="text-sm">E/A ratio</span>
+              <input name="mitralEAratio" type="text" class="mt-1 w-full border rounded p-2">
+            </label>
+            <label><span class="text-sm">MxPG [mmHg]</span>
+              <input name="mitralMxPG" type="number" step="any" class="mt-1 w-full border rounded p-2">
+            </label>
           </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="la">LA [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="la" name="la" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="lavi">LAVI [ml/m²]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="lavi" name="lavi" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="ivs">IVS [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="ivs" name="ivs" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="pw">PW (ściana tylna) [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="pw" name="pw" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="rvot">RVOT [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="rvot" name="rvot" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="lvef">LVEF [%]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="lvef" name="lvef" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="edv">EDV [ml]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="edv" name="edv" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="esv">ESV [ml]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="esv" name="esv" step="0.1" />
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="tapse">TAPSE [mm]:</label>
-            <input class="border rounded p-2 w-full" type="number" id="tapse" name="tapse" step="0.1" />
-          </div>
+          <label class="block mt-2"><span class="text-sm">MnPG [mmHg]</span>
+            <input name="mitralMnPG" type="number" step="any" class="mt-1 w-full border rounded p-2">
+          </label>
         </div>
-      </div>
-
-      <!-- Sekcja: Ocena zastawek -->
-      <div>
-        <h2 class="text-xl font-semibold mb-2">Ocena zastawek</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="mv">Zastawka mitralna (niedomykalność):</label>
-            <select class="border rounded p-2 w-full" id="mv" name="mv">
-              <option value="0">0 – łagodna</option>
-              <option value="1">1 – umiarkowana</option>
-              <option value="2">2 – ciężka</option>
-            </select>
+        <!-- 7.2 Aortic valve -->
+        <div class="mt-6">
+          <h3 class="font-semibold">7.2 Zastawka aortalna</h3>
+          <div class="grid grid-cols-2 gap-4 mt-2">
+            <label><span class="text-sm">Morfologia</span>
+              <select name="aorticMorphology" class="mt-1 w-full border rounded p-2" required>
+                <option value="">-</option>
+                <option>trójpłatkowa</option>
+                <option>dwupłatkowa</option>
+              </select>
+            </label>
+            <label><span class="text-sm">Stenoza/Regurgitacja</span>
+              <select name="aorticRegSten" class="mt-1 w-full border rounded p-2" required>
+                <option value="">-</option>
+                <option>łagodna</option>
+                <option>umiarkowana</option>
+                <option>ciężka</option>
+              </select>
+            </label>
           </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-1" for="tv">Zastawka trójdzielna (niedomykalność):</label>
-            <select class="border rounded p-2 w-full" id="tv" name="tv">
-              <option value="0">0 – łagodna</option>
-              <option value="1">1 – umiarkowana</option>
-              <option value="2">2 – ciężka</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- Przyciski akcji -->
-      <div class="pt-4 flex space-x-4">
-        <button type="button" onclick="exportCSV()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">Eksport CSV</button>
-        <button type="button" onclick="exportDoc()" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-4 py-2 rounded">Eksport DOCX</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Import bibliotek JS: FileSaver i html-docx-js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.0/FileSaver.min.js"></script>
-  <script src="https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js"></script>
-  <script>
-    // Automatyczne obliczanie BMI przy zmianie wzrostu lub wagi
-    const heightInput = document.getElementById('height');
-    const weightInput = document.getElementById('weight');
-    heightInput.addEventListener('input', updateBMI);
-    weightInput.addEventListener('input', updateBMI);
-    function updateBMI() {
-      const h = parseFloat(heightInput.value) || 0;
-      const w = parseFloat(weightInput.value) || 0;
-      if(h > 0 && w > 0) {
-        const bmiValue = (w / ((h/100)**2)).toFixed(1);
-        document.getElementById('bmi').value = bmiValue;
-      } else {
-        document.getElementById('bmi').value = '';
-      }
-    }
-
-    // Funkcja eksportująca dane do CSV
-    function exportCSV() {
-      // Pobierz wartości pól formularza
-      const name = document.getElementById('patientName').value || '';
-      const age = document.getElementById('age').value || '';
-      // Płeć: znajdź zaznaczone radio (0 lub 1)
-      const sexValue = document.querySelector('input[name="sex"]:checked');
-      const sex = sexValue ? sexValue.value : '';
-      const height = document.getElementById('height').value || '';
-      const weight = document.getElementById('weight').value || '';
-      const bmi = document.getElementById('bmi').value || '';
-      // Pola Tak/Nie: checkbox -> 1 jeśli zaznaczony, 0 jeśli nie
-      function cbVal(id) { return document.getElementById(id).checked ? '1' : '0'; }
-      const nt = cbVal('nt');
-      const dm = cbVal('dm');
-      const pchn = cbVal('pchn');
-      const eGFR = document.getElementById('eGFR') ? document.getElementById('eGFR').value : ''; // eGFR jest pominięte w form, pozostaw puste
-      const copd = cbVal('copd');
-      const cad = cbVal('cad');
-      const pci = cbVal('pci');
-      const cabg = cbVal('cabg');
-      const hf = cbVal('hf');
-      const af = cbVal('af');
-      const smoking = cbVal('smoking');
-      const udar = cbVal('udar');
-      const savr = cbVal('savr');
-      const tavi = cbVal('tavi');
-      const mvr = cbVal('mvr');
-      const tvpl = cbVal('tvpl');
-      // Parametry ECHO
-      const lvedd = document.getElementById('lvedd').value || '';
-      const lvesd = document.getElementById('lvesd').value || '';
-      const la = document.getElementById('la').value || '';
-      const lavi = document.getElementById('lavi').value || '';
-      const ivs = document.getElementById('ivs').value || '';
-      const pw = document.getElementById('pw').value || '';
-      const rvot = document.getElementById('rvot').value || '';
-      const lvef = document.getElementById('lvef').value || '';
-      const edv = document.getElementById('edv').value || '';
-      const esv = document.getElementById('esv').value || '';
-      const tapse = document.getElementById('tapse').value || '';
-      const mv = document.getElementById('mv').value || '';
-      const tv = document.getElementById('tv').value || '';
-
-      // Zbuduj linie CSV w takiej kolejności jak pola (średnik jako separator)
-      const csvLine = [
-        name, '', age, sex, height, weight, bmi,
-        nt, dm, pchn, '', copd, cad, pci, cabg, hf, af, smoking, udar,
-        savr, tavi, mvr, tvpl,
-        // Pomiń kolumny badań lab i leków - wstawiamy je jako puste miejsca jeżeli wymagane do zgodności kolumn:
-        // Tutaj dla uproszczenia zakładamy, że nie dołączamy ich wcale do CSV (całkowite pominięcie)
-        lvedd, lvesd, la, lavi, ivs, pw, rvot, lvef, edv, esv, tapse,
-        mv, tv
-      ].join(';');
-
-      // Dodaj nagłówek CSV (opcjonalnie, jeśli chcemy pierwszy wiersz z nazwami kolumn)
-      // const header = "NAZWISKO IMIĘ;L.p.;WIEK;PŁEĆ;WZROST [cm];WAGA [kg];BMI [kg/m2];NT;DM;PCHN;eGFR;POCHP/ASTMA;CAD;PCI;CABG;HF;AF;SMOKING;UDAR/TIA;SAVR;TAVI;MVR/MVpl;TVpl;LVEDD;LVESD;LA;LAVI;IVS;PW;RVOT;LVEF;EDV;ESV;TAPSE;MV;TV";
-      // const csvContent = header + "\n" + csvLine + "\n";
-
-      const csvContent = csvLine + "\n"; // bez nagłówka, tylko jeden wiersz danych
-      // Utwórz blob i zainicjuj pobranie pliku CSV
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      saveAs(blob, 'badanie_echo.csv');  // użycie FileSaver.js do zapisu pliku
-    }
-
-    // Funkcja eksportująca dane do DOCX (raport Word)
-    function exportDoc() {
-      // Pobranie wszystkich potrzebnych wartości (jak w exportCSV, ale będziemy je opisywać tekstowo)
-      const name = document.getElementById('patientName').value || '<i>brak</i>';
-      const age = document.getElementById('age').value || '<i>brak</i>';
-      const sexRadio = document.querySelector('input[name="sex"]:checked');
-      let sexText = '<i>brak</i>';
-      if(sexRadio) { sexText = sexRadio.value === '1' ? 'Mężczyzna' : 'Kobieta'; }
-      const height = document.getElementById('height').value || '';
-      const weight = document.getElementById('weight').value || '';
-      const bmi = document.getElementById('bmi').value || '';
-      // Choroby współist. - zamiana na Tak/Nie
-      function yesNo(id) { return document.getElementById(id).checked ? 'Tak' : 'Nie'; }
-      const nt = yesNo('nt');
-      const dm = yesNo('dm');
-      const pchn = yesNo('pchn');
-      const copd = yesNo('copd');
-      const cad = yesNo('cad');
-      const pci = yesNo('pci');
-      const cabg = yesNo('cabg');
-      const hf = yesNo('hf');
-      const af = yesNo('af');
-      const smoking = yesNo('smoking');
-      const udar = yesNo('udar');
-      const savr = yesNo('savr');
-      const tavi = yesNo('tavi');
-      const mvr = yesNo('mvr');
-      const tvpl = yesNo('tvpl');
-      // Parametry ECHO (przy braku wartości pozostaw puste)
-      const lvedd = document.getElementById('lvedd').value;
-      const lvesd = document.getElementById('lvesd').value;
-      const la = document.getElementById('la').value;
-      const lavi = document.getElementById('lavi').value;
-      const ivs = document.getElementById('ivs').value;
-      const pw = document.getElementById('pw').value;
-      const rvot = document.getElementById('rvot').value;
-      const lvef = document.getElementById('lvef').value;
-      const edv = document.getElementById('edv').value;
-      const esv = document.getElementById('esv').value;
-      const tapse = document.getElementById('tapse').value;
-      // Zastawki - mapowanie kodów 0/1/2 na tekst
-      const mvCode = document.getElementById('mv').value;
-      const tvCode = document.getElementById('tv').value;
-      const severityMap = { '0': 'łagodna', '1': 'umiarkowana', '2': 'ciężka' };
-      const mvText = severityMap[mvCode] || '<i>brak danych</i>';
-      const tvText = severityMap[tvCode] || '<i>brak danych</i>';
-
-      // Budowanie treści HTML dokumentu
-      let htmlContent = `
-        <html>
-          <head>
-            <meta charset="UTF-8">
-            <style>
-              body { font-family: Arial, sans-serif; font-size: 12pt; }
-              h2 { font-size: 14pt; font-weight: bold; margin-top: 10pt; }
-              p { margin: 2pt 0; }
-              ul { margin: 2pt 0 2pt 20pt; }
-            </style>
-          </head>
-          <body>
-            <h2>Dane pacjenta</h2>
-            <p><strong>Imię i nazwisko:</strong> ${name}</p>
-            <p><strong>Wiek:</strong> ${age} lat</p>
-            <p><strong>Płeć:</strong> ${sexText}</p>
-            <p><strong>Wzrost, waga, BMI:</strong> ${height || '-'} cm, ${weight || '-'} kg, ${bmi || '-'} kg/m²</p>
-            <h2>Choroby współistniejące</h2>
-            <ul>
-              <li>Nadciśnienie tętnicze: ${nt}</li>
-              <li>Cukrzyca: ${dm}</li>
-              <li>Przewlekła choroba nerek: ${pchn}</li>
-              <li>POChP/Astma: ${copd}</li>
-              <li>Choroba wieńcowa (CAD): ${cad}</li>
-              <li>Przebyte PCI: ${pci}</li>
-              <li>CABG: ${cabg}</li>
-              <li>Niewydolność serca: ${hf}</li>
-              <li>Migotanie przedsionków: ${af}</li>
-              <li>Palenie tytoniu: ${smoking}</li>
-              <li>Udar/TIA: ${udar}</li>
-            </ul>
-            <h2>Przebyte zabiegi na zastawkach</h2>
-            <ul>
-              <li>SAVR (chirurgiczna wymiana zastawki aortalnej): ${savr}</li>
-              <li>TAVI (przezcewnikowa implantacja zastawki aortalnej): ${tavi}</li>
-              <li>Operacja zastawki mitralnej (MVR/MVpl): ${mvr}</li>
-              <li>Operacja zastawki trójdzielnej (TVpl): ${tvpl}</li>
-            </ul>
-            <h2>Parametry serca w ECHO</h2>
-            <p><strong>Wymiary i funkcja lewej komory:</strong> LVEDD = ${lvedd || '-'} mm, LVESD = ${lvesd || '-'} mm, LVEF = ${lvef || '-'}% (EF).</p>
-            <p><strong>Objętości lewej komory:</strong> EDV = ${edv || '-'} ml, ESV = ${esv || '-'} ml.</p>
-            <p><strong>Lewy przedsionek:</strong> LA = ${la || '-'} mm, LAVI = ${lavi || '-'} ml/m².</p>
-            <p><strong>Grubość ścian LK:</strong> IVS = ${ivs || '-'} mm, PW = ${pw || '-'} mm.</p>
-            <p><strong>Prawa komora:</strong> RVOT = ${rvot || '-'} mm, TAPSE = ${tapse || '-'} mm.</p>
-            <h2>Ocena zastawek</h2>
-            <p>Zastawka mitralna – niedomykalność: <strong>${mvText}</strong></p>
-            <p>Zastawka trójdzielna – niedomykalność: <strong>${tvText}</strong></p>
-          </body>
-        </html>`;
-      
-      // Konwersja HTML -> DOCX i pobranie pliku
-      const docBlob = window.htmlDocx.asBlob(htmlContent, { orientation: 'portrait' });
-      saveAs(docBlob, 'Badanie_ECHO.docx');
-    }
-  </script>
-</body>
-</html>
+          <div class="grid grid-cols-4 gap-4 mt-2">
+            <label><span class="text-sm">VC [cm²]</span>
+              <input name="aorticVC" type="number" step="any" class="mt-1 w
